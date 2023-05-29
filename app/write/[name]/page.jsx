@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 const Write = ({ params: { name } }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [msgSent, setMsgSent] = useState(false);
   const [user, setUser] = useState({});
   useEffect(() => {
     const getUser = async () => {
@@ -23,6 +24,7 @@ const Write = ({ params: { name } }) => {
       .from("Messages")
       .insert({ owner: user.id, message, id: crypto.randomUUID() });
     setLoading(false);
+    setMsgSent(true);
   };
 
   if (loading) {
