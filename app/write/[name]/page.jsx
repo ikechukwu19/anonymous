@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/app/components/Loader";
 import { supabase } from "@/app/lib/supabaseClient";
 import { useState, useEffect } from "react";
 
