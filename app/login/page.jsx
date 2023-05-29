@@ -4,19 +4,23 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { supabase } from "../lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import Loader from "../components/Loader";
+
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const submit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (data.session) {
       router.push("/dashboard");
+      setLoading(false);
     }
     if (error) {
       console.log(error.message);
@@ -34,6 +38,9 @@ export default function Login() {
       console.log(error);
     }
   };
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <main className=" mt-24 px-4">
       <div className="mt-10">

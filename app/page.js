@@ -4,15 +4,19 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { supabase } from "./lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import VerifyEmail from "./components/VerifyEmail";
+import Loader from "./components/Loader";
 
 export default function Home() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const submit = async (e) => {
     e.preventDefault();
     console.log(name, email, password);
+    setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -23,19 +27,12 @@ export default function Home() {
       },
     });
     if (data) {
-      console.log(data);
-      router.push("/dashboard");
+      router.push("/verify");
+      setLoading(false);
     }
     if (error) {
       console.log(error);
     }
-  };
-
-  const getUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    console.log(user);
   };
 
   const signInWithGoogle = async () => {
@@ -44,6 +41,7 @@ export default function Home() {
         provider: "google",
         options: {
           redirectTo: "http://localhost:3000/dashboard",
+          // redirectTo: "https://anonmsgs.vercel.app/dashboard",
         },
       });
       console.log(data);
@@ -51,6 +49,10 @@ export default function Home() {
       console.log(error);
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <main className=" mt-24 px-4">
       <div className="mt-10">
@@ -64,7 +66,7 @@ export default function Home() {
       <form className=" mt-10" onSubmit={submit}>
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Username"
           className="w-full border-b border-solid border-[#FFFEFE] bg-transparent pb-1 text-white outline-none focus:border-white"
           onChange={(e) => setName(e.target.value)}
         />
@@ -89,7 +91,6 @@ export default function Home() {
       <button
         className="mt-10 flex h-14 w-full items-center justify-center gap-4 rounded-lg border border-solid border-black text-white"
         onClick={signInWithGoogle}
-        // onClick={getUser}
       >
         <FcGoogle className=" text-4xl" />
         Sign up with google

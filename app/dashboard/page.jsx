@@ -5,16 +5,41 @@ import Messages from "../components/Messages";
 import Empty from "../components/Empty";
 import { userState } from "../state/atoms/userState";
 import { useRecoilState } from "recoil";
+import { supabase } from "../lib/supabaseClient";
+import Loader from "../components/Loader";
+
 const Dashboard = () => {
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useRecoilState(userState);
+
+  useEffect(() => {
+    const getMsg = async () => {
+      const {
+        data: {
+          user: { id },
+        },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("Messages")
+        .select()
+        .eq("owner", id);
+      setMessages(data);
+      setLoading(false);
+    };
+    getMsg();
+  }, []);
 
   const copy = async (text) => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <div className=" text-white">
@@ -23,10 +48,12 @@ const Dashboard = () => {
       </h4>
       <div>
         <span className="mt-4 flex items-center justify-between rounded-md bg-[#666161] p-4 text-base font-semibold text-dark">
-          <p>https://any.vercel.app/{user.full_name}</p>
+          <p>https://anonmsgs.vercel.app/write/{user.full_name}</p>
           {!copied ? (
             <FaCopy
-              onClick={() => copy(`https://any.vercel.app/${user.full_name}`)}
+              onClick={() =>
+                copy(`https://anonmsgs.vercel.app/write/${user.full_name}`)
+              }
             />
           ) : (
             <FaCheck />
@@ -39,7 +66,11 @@ const Dashboard = () => {
         <Empty />
       ) : (
         messages.map((message) => (
-          <Messages messages={message.text} id={message.id} key={message.id} />
+          <Messages
+            messages={message.message}
+            id={message.id}
+            key={message.id}
+          />
         ))
       )}
     </div>

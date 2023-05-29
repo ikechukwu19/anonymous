@@ -4,25 +4,39 @@ import { useState, useEffect } from "react";
 
 const Write = ({ params: { name } }) => {
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({});
   useEffect(() => {
     const getUser = async () => {
       const { data, error } = await supabase
         .from("profiles")
         .select()
-        .eq("full_name", "Ikechukwu Igwebuike");
+        .eq("full_name", name);
 
-      console.log(data, error);
       setUser(data[0]);
     };
     getUser();
   }, []);
   const sendMessage = async () => {
+    setLoading(true);
     const { error } = await supabase
       .from("Messages")
       .insert({ owner: user.id, message, id: crypto.randomUUID() });
-    console.log(error);
+    setLoading(false);
   };
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (msgSent) {
+    return (
+      <div>
+        <p className=" text-white">Message has been sent to {name}</p>
+      </div>
+    );
+  }
+
   return (
     <div className=" mt-8 flex flex-col items-center px-4 text-white">
       <p>Write a secret message for {name}</p>

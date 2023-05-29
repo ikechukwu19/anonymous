@@ -20,6 +20,10 @@
   animation: spin 1s linear infinite;
 }
 
+.img {
+  filter: drop-shadow(10px 20px 20px #27252579);
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
