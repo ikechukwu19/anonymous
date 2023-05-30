@@ -28,9 +28,9 @@ export default function Home() {
     });
     if (data) {
       router.push("/verify");
-      setLoading(false);
     }
     if (error) {
+      setLoading(false);
       console.log(error);
     }
   };

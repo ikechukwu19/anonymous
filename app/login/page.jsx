@@ -20,9 +20,9 @@ export default function Login() {
     });
     if (data.session) {
       router.push("/dashboard");
-      setLoading(false);
     }
     if (error) {
+      setLoading(false);
       console.log(error.message);
     }
   };
