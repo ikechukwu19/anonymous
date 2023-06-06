@@ -1,6 +1,7 @@
 "use client";
 import Loader from "@/app/components/Loader";
 import { supabase } from "@/app/lib/supabaseClient";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 const Write = ({ params: { name } }) => {
@@ -34,8 +35,21 @@ const Write = ({ params: { name } }) => {
 
   if (msgSent) {
     return (
-      <div>
-        <p className=" text-white">Message has been sent to {name}</p>
+      <div className=" flex h-screen w-screen flex-col items-center justify-center p-4">
+        <Image
+          src="/msg.svg"
+          height={200}
+          width={200}
+          style={{ objectFit: "cover" }}
+          alt="msg sent"
+        />
+        <p className="mt-1 text-white">Message has been sent to {name}</p>
+        <button
+          className="mt-10 flex h-14 w-full items-center justify-center gap-4 rounded-lg bg-blue-500 text-white"
+          onClick={() => setMsgSent(false)}
+        >
+          Send another message
+        </button>
       </div>
     );
   }
@@ -47,7 +61,7 @@ const Write = ({ params: { name } }) => {
         cols="30"
         rows="10"
         placeholder="write your message.."
-        className=" mt-9 rounded-3xl border border-solid border-white bg-transparent p-4 focus:outline-none"
+        className=" mt-3 rounded-3xl border border-solid border-white bg-transparent p-4 focus:outline-none"
         onChange={(e) => setMessage(e.target.value)}
       ></textarea>
       <button
